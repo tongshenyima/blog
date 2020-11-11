@@ -46,7 +46,7 @@ public class LogAspect {
             private String ip;
             private String classMethod;
             private Object[] args;
-
+//
             public RequestLog(String url, String ip, String classMethod, Object[] args) {
                 this.url = url;
                 this.ip = ip;
