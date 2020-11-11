@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-//Writing by Mr.Mao
+
 @ControllerAdvice
 public class ControllerExceptionHandler {
 
