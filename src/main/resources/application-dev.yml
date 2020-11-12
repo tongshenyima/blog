@@ -4,6 +4,8 @@ spring:
     url: jdbc:mysql://localhost/blog1?useSSL=false&serverTimezone=UTC&characterEncoding=utf-8
     username: root
     password: root
+    messages:
+      basename: i18n/messages
   jpa:
       hibernate:
         ddl-auto: update

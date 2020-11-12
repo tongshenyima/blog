@@ -23,9 +23,18 @@ public class Comment {
     private List<Comment> replyComments =new ArrayList<>();
     @ManyToOne
     private Comment parentComment;
-    public Comment() {
+    private boolean adminComment;
+
+    public boolean isAdminComment() {
+        return adminComment;
     }
 
+    public void setAdminComment(boolean adminComment) {
+        this.adminComment = adminComment;
+    }
+
+    public Comment() {
+    }
 
     @Override
     public String toString() {
@@ -36,6 +45,10 @@ public class Comment {
                 ", content='" + content + '\'' +
                 ", avatar='" + avatar + '\'' +
                 ", createTime=" + createTime +
+                ", blog=" + blog +
+                ", replyComments=" + replyComments +
+                ", parentComment=" + parentComment +
+                ", adminComment=" + adminComment +
                 '}';
     }
 

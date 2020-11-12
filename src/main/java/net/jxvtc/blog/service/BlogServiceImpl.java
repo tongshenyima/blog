@@ -17,15 +17,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+
+import javax.persistence.criteria.*;
+import javax.transaction.Transactional;
+import java.util.*;
 
 /**
  * Created by limi on 2017/10/20.
@@ -41,7 +37,7 @@ public class BlogServiceImpl implements BlogService {
     public Blog getBlog(Long id) {
         return blogRepository.getOne(id);
     }
-
+    @Transactional
     @Override
     public Blog getAndConvert(Long id) {
         Blog blog = blogRepository.getOne(id);
@@ -52,8 +48,11 @@ public class BlogServiceImpl implements BlogService {
         BeanUtils.copyProperties(blog,b);
         String content = b.getContent();
         b.setContent(MarkdownUtils.markdownToHtmlExtensions(content));
+
+        blogRepository.updateViews(id);
         return b;
     }
+
 
 
 
@@ -108,6 +107,27 @@ public class BlogServiceImpl implements BlogService {
         return blogRepository.findByQuery(query,pageable);
     }
 
+    @Override
+    public Page<Blog> listBlog(Long tagId, Pageable pageable) {
+        return blogRepository.findAll(new Specification<Blog>() {
+            @Override
+            public Predicate toPredicate(Root<Blog> root, CriteriaQuery<?> cq, CriteriaBuilder cb) {
+                Join join = root.join("tags");
+                return cb.equal(join.get("id"),tagId);
+            }
+        },pageable);
+    }
+
+    @Override
+    public Map<String, List<Blog>> archiveBlog() {
+        List<String> years = blogRepository.findGroupYear();
+        Map<String, List<Blog>> map = new HashMap<>();
+        for (String year : years) {
+            map.put(year, blogRepository.findByYear(year));
+        }
+        return map;
+    }
+
     @Transactional
     @Override
     public Blog updateBlog(Long id, Blog blog) {
@@ -119,6 +139,12 @@ public class BlogServiceImpl implements BlogService {
         b.setUpdateTime(new Date());
         return blogRepository.save(b);
     }
+
+    @Override
+    public Long countBlog() {
+        return blogRepository.count();
+    }
+
 
     @Transactional
     @Override
